@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Automation Script</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin-top: 20px !important;
+            width: 100%;
+            margin-bottom: 20px !important;
+            height: auto;
+        }
+        body.transript-page {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #112857;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #112857;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            background-color: #112857;
+        }
+        #loader {
+            display: none;
+            margin-top: 20px;
+        }
+        #loader div {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #4CAF50;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+        .error {
+            color: red;
+        }
+        .info {
+            color: #333;
+        }
+        pre {
+            text-align: left; /* Align text to the left */
+            margin-top: 20px; /* Space between messages and file content */
+            border: 1px solid #ccc; /* Light gray border */
+            padding: 10px; /* Space inside the border */
+            background-color: #f9f9f9; /* Light gray background */
+            border-radius: 5px; /* Rounded corners */
+            white-space: pre-wrap; /* Preserve whitespace and wrap lines */
+            word-wrap: break-word; /* Allow long words to break to the next line */
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+            /* display: none; */
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            /* border: 1px solid #ddd; */
+        }
+
+        .data-table th {
+            background-color: #112857;
+            color: white;
+            font-weight: bold;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .data-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .main-flex-wrapper {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .main-flex-wrapper pre#fileContent {
+            display: none !important;
+        }
+        .main-flex-wrapper button#startButton {
+            margin-top: 25px;
+        }
+        .main-flex-wrapper #message {
+            margin-bottom: 20px;
+            color: #03a678;
+        }
+        .data-table-wrapper {
+            height: 400px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 600px) {
+            .data-table th, .data-table td {
+                padding: 8px;
+            }
+
+            .table-heading {
+                font-size: 1.5rem;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+        }
+        @media (max-width: 600px) {
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="transript-page">
+    <div class="main-flex-wrapper">
+        <div class="container" id="containWidth">
+            <h1>Send Cloud Automation</h1>
+            <button id="startButton" onclick="startScript()">Start</button>
+            <div id="loader">
+                <div></div>
+            </div>  
+            <div id="message" class="message"></div>
+            <pre id="fileContent" class="message" style="display: none;"></pre>
+            <div id="dataMain" class="data-table-wrapper" style="display: none;">
+                <table class="data-table" id="dataTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Total Order Value</th>
+                            <th>Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startScript() {
+            const button = document.getElementById('startButton');
+            const loader = document.getElementById('loader');
+            const messageDiv = document.getElementById('message');
+            const fileContentDiv = document.getElementById('fileContent');
+            const dataTable = document.getElementById('dataTable');
+            const dataTableBody = document.getElementById('dataTableBody');
+            const dataTableBodyMain = document.getElementById('dataMain');
+            const containerWidth = document.getElementById('containWidth');
+
+            
+
+        
+            button.disabled = true;  // Disable the button
+            loader.style.display = 'block';  // Show loader
+            messageDiv.textContent = 'Please wait, we will notify you when the script is finished.';
+            messageDiv.className = 'message info';  // Set the info class for the waiting message
+        
+            fetch('/start-script', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                loader.style.display = 'none';  // Hide loader
+                button.disabled = false;  // Enable the button
+                
+                if (data.status === 'success') {
+                    messageDiv.textContent = 'Script executed successfully!';
+                    messageDiv.classList.remove('error');
+                    messageDiv.classList.add('info');  // Update class to info
+        
+                    // Clear previous table rows
+                    dataTableBody.innerHTML = '';
+        
+                    // Show file content in JSON format for reference
+                    fileContentDiv.style.display = 'block';
+                    fileContentDiv.textContent = 'Orders that contain errors:\n' + JSON.stringify(data.fileContent, null, 2);
+                    // Convert fileContent object to array for iteration
+                    const orders = Object.values(data.fileContent);
+
+
+        
+                    // Populate table with JSON data
+                    orders.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.order_id}</td>
+                            <td>${order.total_order_value || "EMPTY"}</td>
+                            <td>${order.discount_value}</td>
+                        `;
+                        dataTableBody.appendChild(row);
+                    });
+        
+                    // Display the table
+                    dataTable.style.display = 'table';
+                    dataMain.style.display = 'block';
+                    containerWidth.style.height = '100%';
+        
+                } else {
+                    messageDiv.textContent = 'Error: ' + data.message;
+                    messageDiv.classList.add('error');
+                    messageDiv.classList.remove('info');
+                    fileContentDiv.style.display = 'none';
+                    dataTable.style.display = 'none'; // Hide table if there's an error
+                    dataMain.style.display = 'none';
+                    containerWidth.style.height = 'auto';
+                }
+            })
+            .catch(error => {
+                loader.style.display = 'none';  // Hide loader
+                button.disabled = false;  // Enable the button
+                messageDiv.textContent = 'Error: ' + error;
+                messageDiv.classList.add('error');
+                messageDiv.classList.remove('info');
+                fileContentDiv.style.display = 'none';
+                dataTable.style.display = 'none';
+                dataMain.style.display = 'none';
+                containerWidth.style.height = 'auto';
+
+            });
+        }
+    </script>
+</body>
+</html>

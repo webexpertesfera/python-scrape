@@ -1,0 +1,53 @@
+
+Selenium Automation Script for Sendcloud - Setup Instructions
+
+Follow these steps to set up and run the Selenium automation script for Sendcloud:
+
+1. **Install Python**
+   - Ensure you have Python 3.6 or later installed. You can download Python from the official Python website: https://www.python.org/
+   - Verify installation by running:
+     python --version
+
+2. **Install Required Libraries**
+   - Install Selenium and other required libraries using pip. Run the following command in your terminal or command prompt:
+     pip install selenium
+
+3. **Download Chrome Browser**
+   - Ensure you have Google Chrome installed. You can download it from the Google Chrome website: https://www.google.com/chrome/
+
+4. **Download ChromeDriver**
+   - Download ChromeDriver compatible with your version of Chrome from the ChromeDriver website: https://chromedriver.chromium.org/downloads
+   - Find your Chrome browser version:
+     - Open Chrome.
+     - Go to `Settings` > `About Chrome`.
+     - Note the version number (e.g., 96.0.4664.110).
+   - Download the corresponding ChromeDriver version.
+
+5. **Set Up ChromeDriver Path**
+   - After downloading, place the ChromeDriver executable in a directory on your system (e.g., `C:/chromedriver` on Windows or `/usr/local/bin` on macOS/Linux).
+   - Update the `chrome_driver_path` variable in the script:
+     chrome_driver_path = '/path/to/chromedriver'  # Replace with your ChromeDriver path
+
+6. **Configure Script Credentials**
+   - Replace the placeholders for login credentials in the `login()` function with your actual Sendcloud credentials:
+     email_field.send_keys('your_email@example.com')
+     password_field.send_keys('your_password')
+
+7. **Run the Script**
+   - Navigate to the directory containing the script in your terminal or command prompt.
+   - Run the script:
+     python selenium_script.py
+
+8. **Optional Setup**
+   - **Run in Headless Mode**:
+     - Uncomment the following line in the script to enable headless mode (browser runs in the background without a visible window):
+       chrome_options.add_argument("--headless")
+   - **Adjust Timeouts**:
+     - Modify the timeout duration in the `WebDriverWait` initialization to accommodate slower page loads if needed:
+       wait = WebDriverWait(driver, 20)  # Adjust timeout duration as required
+
+Required Dependencies Summary
+- Python 3.6 or later: Programming language to run the script.
+- Selenium: Python library for browser automation (`pip install selenium`).
+- Google Chrome: Browser for automation.
+- ChromeDriver: WebDriver to control Chrome for Selenium.
